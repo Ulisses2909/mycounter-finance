@@ -32,6 +32,43 @@
   /* Slashed zero + tabular nums for all monetary displays */
   --font-num-features:"tnum","zero";
 }
+
+/* ── LIGHT MODE ───────────────────────────────── */
+:root.light-mode {
+  --bg:#F0F4FF;--s1:#FFFFFF;--s2:#F5F7FF;--s3:#EAEEf8;--s4:#E0E6F5;
+  --b1:rgba(0,0,0,.04);--b2:rgba(0,0,0,.08);--b3:rgba(0,0,0,.14);--b4:rgba(0,0,0,.22);
+  --teal:#009B7D;--teal2:rgba(0,155,125,.1);--teal3:rgba(0,155,125,.25);--teal4:rgba(0,155,125,.4);
+  --amber:#D97700;--amber2:rgba(217,119,0,.1);--amber3:rgba(217,119,0,.26);
+  --coral:#E03E3E;--coral2:rgba(224,62,62,.1);--coral3:rgba(224,62,62,.26);
+  --lime:#5A9E00;--lime2:rgba(90,158,0,.1);--lime3:rgba(90,158,0,.26);
+  --violet:#6B5BD6;--violet2:rgba(107,91,214,.1);--violet3:rgba(107,91,214,.26);
+  --t1:#0D1226;--t2:#3B4A6B;--t3:#7080A0;--t4:rgba(10,18,40,.1);
+  color-scheme: light;
+}
+:root.light-mode html,
+:root.light-mode body { background: #E8EDFA; }
+:root.light-mode #app { background: var(--bg); }
+:root.light-mode #nav { background: rgba(245,247,255,.96); }
+:root.light-mode #topbar { background: var(--bg); }
+:root.light-mode #scr-auth { background: var(--bg); }
+:root.light-mode .auth-card { background: rgba(255,255,255,.9); border-color:rgba(0,155,125,.2); }
+:root.light-mode .finp { background: #F0F4FF !important; color:#0D1226 !important; -webkit-text-fill-color:#0D1226 !important; border-color:rgba(0,0,0,.18); }
+:root.light-mode .finp:focus { border-color:var(--teal); }
+:root.light-mode input:-webkit-autofill,
+:root.light-mode input:-webkit-autofill:focus { -webkit-box-shadow:0 0 0 1000px #F0F4FF inset !important; -webkit-text-fill-color:#0D1226 !important; }
+:root.light-mode .modal { background: var(--s1); }
+:root.light-mode .sett-group { background: var(--s1); }
+:root.light-mode .card { background: var(--s1); }
+:root.light-mode .chat-hdr, :root.light-mode .chat-bar { background: var(--s1); }
+:root.light-mode .chat-in { background: var(--s2); color: var(--t1); }
+:root.light-mode .msg-ai { background: var(--s3); color: var(--t1); }
+:root.light-mode .bsum { background: var(--s1); }
+:root.light-mode .pro-card { background: linear-gradient(145deg,#fff,#F5F7FF); }
+:root.light-mode .bal { background: linear-gradient(160deg,var(--s3),var(--s2)); }
+:root.light-mode .bal-label { color: rgba(0,120,95,.85); }
+:root.light-mode .bal-value { color: #0D1226; }
+:root.light-mode .bal-delta { color: #3B4A6B; }
+:root.light-mode .ins { background: rgba(0,155,125,.06); border-color: rgba(0,155,125,.2); }
 html,body{
   width:100%;height:100%;
   background:#02020A;
@@ -1127,6 +1164,20 @@ textarea.finp{resize:vertical;min-height:80px}
       <div class="sett-row" onclick="toggleLang()">
         <div><div class="sett-label" id="lbl-sett-lang">Language</div><div class="sett-sub" id="sett-lang-sub">English</div></div>
         <div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">🌐</span><span class="sett-arrow">›</span></div>
+      </div>
+    </div>
+
+    <!-- Appearance / Dark-Light Mode -->
+    <div class="sett-group" style="margin-bottom:12px">
+      <div class="sett-row" onclick="toggleAppearance()" style="cursor:pointer">
+        <div>
+          <div class="sett-label" id="lbl-sett-appearance">Aparência</div>
+          <div class="sett-sub" id="sett-appearance-sub">Modo escuro</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span id="appearance-icon" style="font-size:20px">🌙</span>
+          <button class="toggle" id="appearance-toggle" onclick="event.stopPropagation();toggleAppearance()"></button>
+        </div>
       </div>
     </div>
 
@@ -3104,6 +3155,10 @@ function renderSettings(){
   setTxt('sett-lang-sub',lang==='pt'?'Português (Brasil)':'English');
   const tapLbl = document.getElementById('lbl-tap-photo');
   if(tapLbl) tapLbl.textContent = lang==='pt'?'Toque no avatar para alterar foto':'Tap avatar to change photo';
+  // Appearance label
+  const appLbl = document.getElementById('lbl-sett-appearance');
+  if(appLbl) appLbl.textContent = lang==='pt' ? 'Aparência' : 'Appearance';
+  applyAppearance(); // refresh appearance toggle state
 }
 
 function updateProfile(key,val){
@@ -3151,16 +3206,19 @@ function handleAvatarUpload(event, source) {
 // ══════════════════════════════════════════════════
 function openShareSheet() {
   const isPt = lang === 'pt';
-  const url = window.location.href;
+  const url = 'https://mycounter-finance.vercel.app/';
   const title = isPt ? 'MyCounter — Finanças Pessoais' : 'MyCounter — Personal Finance';
   const text = isPt
     ? 'Estou usando o MyCounter para controlar minhas finanças! É grátis e tem IA integrada. 💚'
     : 'I\'m using MyCounter to manage my finances! It\'s free and has AI built-in. 💚';
-  const fullText = `${text}\n${url}`;
+  const instructions = isPt
+    ? '\n\n📲 Como acessar:\n1. Abra o link no seu celular ou computador\n2. Toque em Criar conta e preencha seu nome, e-mail e senha\n3. Confirme o cadastro e faça o login para começar!'
+    : '\n\n📲 How to access:\n1. Open the link on your phone or computer\n2. Tap Create account and fill in your name, email and password\n3. Confirm your registration and log in to get started!';
+  const fullText = `${text}${instructions}\n${url}`;
 
   // Try native Web Share API first (mobile browsers)
   if (navigator.share) {
-    navigator.share({ title, text, url }).catch(() => {});
+    navigator.share({ title, text: text + instructions, url }).catch(() => {});
     return;
   }
 
@@ -3183,7 +3241,7 @@ function openShareSheet() {
     { icon:'📸', label:'Instagram', color:'#E1306C', bg:'rgba(225,48,108,.12)', border:'rgba(225,48,108,.3)',
       href:`https://www.instagram.com/` },
     { icon:'🔗', label: isPt ? 'Copiar link' : 'Copy link', color:'#0BFFD0', bg:'rgba(11,255,208,.12)', border:'rgba(11,255,208,.3)',
-      action: () => { navigator.clipboard.writeText(url).catch(()=>{}); ov.remove(); showToast(isPt?'✓ Link copiado!':'✓ Link copied!','success'); } },
+      action: () => { navigator.clipboard.writeText(fullText).catch(()=>{}); ov.remove(); showToast(isPt?'✓ Link copiado!':'✓ Link copied!','success'); } },
   ];
 
   ov.innerHTML = `
@@ -3192,7 +3250,7 @@ function openShareSheet() {
       <div style="width:36px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin:14px auto 18px"></div>
       <div style="font-size:17px;font-weight:800;font-family:'Outfit',sans-serif;margin-bottom:16px;color:#F4F7FF">
         ${isPt ? 'Compartilhar' : 'Share'}</div>
-      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:20px">
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px">
         ${options.map((o,i)=>`
           <div onclick="${o.action ? `window._shareAction${i}()` : `window.open('${o.href}','_blank')`}" 
             style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:10px 4px;
@@ -3201,6 +3259,21 @@ function openShareSheet() {
             <span style="font-size:22px">${o.icon}</span>
             <span style="font-size:9.5px;font-weight:700;color:${o.color};text-align:center;font-family:'Nunito Sans',sans-serif;letter-spacing:.02em">${o.label}</span>
           </div>`).join('')}
+      </div>
+      <!-- Instruction message -->
+      <div style="background:rgba(11,255,208,.07);border:.5px solid rgba(11,255,208,.2);border-radius:12px;
+        padding:12px 14px;margin-bottom:14px">
+        <div style="font-size:12px;font-weight:800;color:#0BFFD0;font-family:'Outfit',sans-serif;margin-bottom:7px">
+          📲 ${isPt ? 'Como acessar:' : 'How to access:'}
+        </div>
+        <div style="font-size:11.5px;color:#C8D6F0;line-height:1.75;font-family:'Nunito Sans',sans-serif">
+          ${isPt
+            ? `1. Abra o link no seu celular ou computador<br>2. Toque em <strong style="color:#fff">Criar conta</strong> e preencha seu nome, e-mail e senha<br>3. Confirme o cadastro e faça o login para começar!`
+            : `1. Open the link on your phone or computer<br>2. Tap <strong style="color:#fff">Create account</strong> and fill in your name, email and password<br>3. Confirm your registration and log in to get started!`}
+        </div>
+        <div style="margin-top:9px;padding:7px 10px;background:rgba(11,255,208,.08);border-radius:8px;
+          font-size:10.5px;font-family:'JetBrains Mono',monospace;color:rgba(11,255,208,.85);
+          word-break:break-all;letter-spacing:-.01em">${url}</div>
       </div>
       <button onclick="document.getElementById('share-ov').remove()" 
         style="width:100%;padding:12px;background:rgba(255,255,255,.07);border:.5px solid rgba(255,255,255,.12);
@@ -3301,9 +3374,49 @@ function openFinanceProModal() {
 }
 
 // ══════════════════════════════════════════════════
+// APPEARANCE (DARK / LIGHT MODE)
+// ══════════════════════════════════════════════════
+let isLightMode = false;
+
+function toggleAppearance() {
+  isLightMode = !isLightMode;
+  applyAppearance();
+  // Persist preference
+  try { localStorage.setItem('mc_light_mode', isLightMode ? '1' : '0'); } catch(e){}
+}
+
+function applyAppearance() {
+  const root = document.documentElement;
+  const toggle = document.getElementById('appearance-toggle');
+  const icon = document.getElementById('appearance-icon');
+  const sub = document.getElementById('sett-appearance-sub');
+  if (isLightMode) {
+    root.classList.add('light-mode');
+    root.style.colorScheme = 'light';
+    if (toggle) toggle.classList.add('on');
+    if (icon) icon.textContent = '☀️';
+    if (sub) sub.textContent = lang === 'pt' ? 'Modo claro' : 'Light mode';
+  } else {
+    root.classList.remove('light-mode');
+    root.style.colorScheme = 'dark';
+    if (toggle) toggle.classList.remove('on');
+    if (icon) icon.textContent = '🌙';
+    if (sub) sub.textContent = lang === 'pt' ? 'Modo escuro' : 'Dark mode';
+  }
+}
+
+function loadAppearancePref() {
+  try {
+    const v = localStorage.getItem('mc_light_mode');
+    if (v === '1') { isLightMode = true; applyAppearance(); }
+  } catch(e){}
+}
+
+// ══════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════
 loadAll();
+loadAppearancePref();
 </script>
 </body>
 </html>
