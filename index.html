@@ -165,6 +165,8 @@ html,body{
 #nav-transactions.active .ni-pill{background:linear-gradient(135deg,#FF6B6B,#FF9900);color:#fff;box-shadow:0 4px 14px rgba(255,107,107,.4)}
 #nav-budgets.active .ni-pill{background:linear-gradient(135deg,#8B7CF6,#C084FC);color:#fff;box-shadow:0 4px 14px rgba(139,124,246,.4)}
 #nav-csv.active     .ni-pill{background:linear-gradient(135deg,#06B6D4,#3B82F6);color:#fff;box-shadow:0 4px 14px rgba(59,130,246,.35)}
+#nav-scheduled.active .ni-pill{background:linear-gradient(135deg,#EC4899,#8B5CF6);color:#fff;box-shadow:0 4px 14px rgba(236,72,153,.4)}}
+#nav-scheduled.active .ni-lb{color:#EC4899}
 #nav-fin.active     .ni-pill{background:linear-gradient(135deg,#F59E0B,#EF4444);color:#fff;box-shadow:0 4px 14px rgba(245,158,11,.4)}
 
 .ni-lb{font-size:9px;color:var(--t3);letter-spacing:.05em;font-weight:700;
@@ -662,6 +664,24 @@ textarea.finp{resize:vertical;min-height:80px}
 .sett-arrow{color:var(--t2);font-size:18px}
 
 /* ═══════════════════════════════════════
+   SCHEDULED SCREEN
+═══════════════════════════════════════ */
+#scr-scheduled .stat {
+  border-radius: var(--rs);
+  padding: 14px 12px;
+}
+#scr-scheduled .bal {
+  background: linear-gradient(145deg, #0A0A18 0%, #080820 60%, #050518 100%);
+  border: 0.5px solid rgba(236, 72, 153, 0.2);
+}
+#scr-scheduled .bal-glow {
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.12) 0%, transparent 65%);
+}
+#scr-scheduled .tx-date-hdr {
+  background: linear-gradient(90deg, rgba(236, 72, 153, 0.04) 0%, transparent 100%);
+}
+
+/* ═══════════════════════════════════════
    MISC
 ═══════════════════════════════════════ */
 .month-badge{font-size:11px;color:var(--t1);background:var(--s3);border:.5px solid var(--b3);
@@ -979,6 +999,38 @@ textarea.finp{resize:vertical;min-height:80px}
       <span style="color:rgba(11,255,208,.3);font-size:20px;margin-left:4px">›</span>
     </div>
     
+    <!-- Scheduled Summary Card -->
+    <div class="card" style="margin-bottom:14px;cursor:pointer" onclick="navigate('scheduled')">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#EC4899,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:16px">📅</div>
+          <div>
+            <div style="font-size:13px;font-weight:700;font-family:var(--ff-display);color:var(--t1)" id="dash-sched-title">Agendados</div>
+            <div style="font-size:11px;color:var(--t3);font-family:var(--ff-body)" id="dash-sched-sub">Próximos lançamentos</div>
+          </div>
+        </div>
+        <span style="color:var(--t3);font-size:20px">›</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px">
+        <div style="text-align:center">
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);margin-bottom:3px;font-family:var(--ff-body)" id="dash-sched-count-label">Lançamentos</div>
+          <div style="font-size:16px;font-weight:800;font-family:var(--ff-display);color:var(--t1)" id="dash-sched-count">0</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--lime);margin-bottom:3px;font-family:var(--ff-body)">Receitas</div>
+          <div style="font-size:14px;font-weight:700;font-family:var(--ff-mono);color:var(--lime)" id="dash-sched-inc">0</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--coral);margin-bottom:3px;font-family:var(--ff-body)">Despesas</div>
+          <div style="font-size:14px;font-weight:700;font-family:var(--ff-mono);color:var(--coral)" id="dash-sched-exp">0</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--violet);margin-bottom:3px;font-family:var(--ff-body)">Transf.</div>
+          <div style="font-size:14px;font-weight:700;font-family:var(--ff-mono);color:var(--violet)" id="dash-sched-trf">0</div>
+        </div>
+      </div>
+    </div>
+
     <!-- Finance PRO Promo -->
     <div class="pro-card" onclick="openFinanceProModal()">
       <div class="pro-glow"></div>
@@ -1029,7 +1081,13 @@ textarea.finp{resize:vertical;min-height:80px}
 <div id="scr-transactions" class="screen">
   <div class="ph">
     <div class="ph-t" id="ph-transactions">Transactions</div>
-    <div class="ph-r"><div id="tx-month-btn" class="month-badge" onclick="cycleTxMonth()"></div></div>
+    <div class="ph-r">
+      <div style="display:flex;align-items:center;gap:2px">
+        <button id="tx-month-prev" onclick="navTxMonth(-1)" style="width:26px;height:26px;border-radius:8px;background:var(--s3);border:.5px solid var(--b3);color:var(--t2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0" onmouseover="this.style.borderColor='var(--coral)';this.style.color='var(--t1)'" onmouseout="this.style.borderColor='var(--b3)';this.style.color='var(--t2)'">‹</button>
+        <div id="tx-month-btn" class="month-badge" style="cursor:default;min-width:80px;text-align:center"></div>
+        <button id="tx-month-next" onclick="navTxMonth(1)" style="width:26px;height:26px;border-radius:8px;background:var(--s3);border:.5px solid var(--b3);color:var(--t2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0" onmouseover="this.style.borderColor='var(--coral)';this.style.color='var(--t1)'" onmouseout="this.style.borderColor='var(--b3)';this.style.color='var(--t2)'">›</button>
+      </div>
+    </div>
   </div>
   <div style="padding:0 16px 8px"><div class="chips-row" id="tx-chips"></div></div>
   <!-- Summary totals for current filter -->
@@ -1080,6 +1138,65 @@ textarea.finp{resize:vertical;min-height:80px}
       <button class="btn-main" onclick="importCSV()" id="btn-import-csv">Import transactions</button>
     </div>
   </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCHEDULED TRANSACTIONS
+══════════════════════════════════════ -->
+<div id="scr-scheduled" class="screen">
+  <div class="ph">
+    <div class="ph-t" id="ph-scheduled">Scheduled</div>
+    <div class="ph-r">
+      <div style="display:flex;align-items:center;gap:2px">
+        <button id="sched-month-prev" onclick="navSchedMonth(-1)" style="width:26px;height:26px;border-radius:8px;background:var(--s3);border:.5px solid var(--b3);color:var(--t2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0" onmouseover="this.style.borderColor='#EC4899';this.style.color='var(--t1)'" onmouseout="this.style.borderColor='var(--b3)';this.style.color='var(--t2)'">‹</button>
+        <div id="sched-month-btn" class="month-badge" style="cursor:default;min-width:80px;text-align:center"></div>
+        <button id="sched-month-next" onclick="navSchedMonth(1)" style="width:26px;height:26px;border-radius:8px;background:var(--s3);border:.5px solid var(--b3);color:var(--t2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0" onmouseover="this.style.borderColor='#EC4899';this.style.color='var(--t1)'" onmouseout="this.style.borderColor='var(--b3)';this.style.color='var(--t2)'">›</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div style="padding:0 16px 12px">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+      <div class="stat income" style="background:linear-gradient(145deg,rgba(168,255,62,.08),rgba(168,255,62,.02));border-color:rgba(168,255,62,.2)">
+        <div class="stat-lb" id="lbl-future-income" style="color:rgba(168,255,62,.8)">Future Income</div>
+        <div class="stat-val" id="sched-inc" style="color:var(--lime);font-size:18px">0</div>
+        <div class="mbar"><div class="mfill" id="mf-sched-inc" style="background:var(--lime);width:0%"></div></div>
+      </div>
+      <div class="stat expense" style="background:linear-gradient(145deg,rgba(255,107,107,.08),rgba(255,107,107,.02));border-color:rgba(255,107,107,.2)">
+        <div class="stat-lb" id="lbl-future-expense" style="color:rgba(255,107,107,.8)">Future Expenses</div>
+        <div class="stat-val" id="sched-exp" style="color:var(--coral);font-size:18px">0</div>
+        <div class="mbar"><div class="mfill" id="mf-sched-exp" style="background:var(--coral);width:0%"></div></div>
+      </div>
+      <div class="stat" style="background:linear-gradient(145deg,rgba(139,124,246,.08),rgba(139,124,246,.02));border-color:rgba(139,124,246,.2)">
+        <div class="stat-lb" id="lbl-future-transfer" style="color:rgba(139,124,246,.8)">Transfers</div>
+        <div class="stat-val" id="sched-trf" style="color:var(--violet);font-size:18px">0</div>
+        <div class="mbar"><div class="mfill" id="mf-sched-trf" style="background:var(--violet);width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- Projected Balance Card -->
+    <div class="bal" style="margin-bottom:14px;padding:18px 16px">
+      <div class="bal-grid"></div>
+      <div class="bal-glow" style="background:radial-gradient(circle,rgba(236,72,153,.12) 0%,transparent 65%)"></div>
+      <div class="bal-label" id="lbl-projected-balance" style="color:rgba(236,72,153,.8)">Projected Balance</div>
+      <div class="bal-value" id="sched-net" style="font-size:32px">$0.00</div>
+      <div class="bal-delta" id="sched-delta" style="font-size:11px"></div>
+    </div>
+
+    <!-- Filter chips -->
+    <div class="chips-row" id="sched-chips" style="margin-bottom:10px">
+      <button class="chip on" id="chip-sched-all" onclick="setSchedFilter('all')">✦ All</button>
+      <button class="chip" id="chip-sched-inc" onclick="setSchedFilter('income')">💰 Income</button>
+      <button class="chip" id="chip-sched-exp" onclick="setSchedFilter('expense')">💸 Expenses</button>
+      <button class="chip" id="chip-sched-trf" onclick="setSchedFilter('transfer')">⇄ Transfers</button>
+    </div>
+  </div>
+
+  <!-- List -->
+  <div style="padding:0 16px 100px" id="sched-list-wrap"></div>
+
+  <button class="fab" onclick="openAddModal()" style="background:linear-gradient(135deg,#EC4899,#8B5CF6);box-shadow:0 6px 22px rgba(236,72,153,.35)">+</button>
 </div>
 
 <!-- ══════════════════════════════════════
@@ -1196,7 +1313,7 @@ textarea.finp{resize:vertical;min-height:80px}
 <!-- Data -->
     <div class="sett-group" style="margin-bottom:12px">
       <div class="sett-row" onclick="exportData()">
-        <div><div class="sett-label" id="lbl-export">Export data</div><div class="sett-sub" id="lbl-export-sub">Download backup JSON</div></div>
+        <div><div class="sett-label" id="lbl-export">Export data</div><div class="sett-sub" id="lbl-export-sub">Download Excel spreadsheet</div></div>
         <span class="sett-arrow">›</span>
       </div>
       <div class="sett-row" onclick="loadDemoData()">
@@ -1269,6 +1386,12 @@ textarea.finp{resize:vertical;min-height:80px}
       <svg viewBox="0 0 24 24" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
     </div>
     <span class="ni-lb" id="nav-lb-csv">Importar</span>
+  </div>
+  <div class="ni" id="nav-scheduled" onclick="navigate('scheduled')">
+    <div class="ni-pill">
+      <svg viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    </div>
+    <span class="ni-lb" id="nav-lb-scheduled">Agendados</span>
   </div>
   <div class="ni" id="nav-fin" onclick="navigate('fin')">
     <div class="ni-pill">
@@ -1490,7 +1613,7 @@ const LANGS = {
     insightWarn:'⚠️ {cat} at {pct}% of budget. Want tips? →',
     insightTop:'Top expense: {cat} ({val}, {pct}% of total). Ask Fin! →',
     // Transactions
-    phTx:'Transactions', filterAll:'All', filterInc:'Income', filterExp:'Expenses',
+    phTx:'Transactions', filterAll:'All', filterInc:'Income', filterExp:'Expenses', filterTrf:'Transfers',
     txDateToday:'Today', txDateYest:'Yesterday',
     // Budgets
     phBud:'Budgets', lblSpent:'Spent', lblBudgeted:'Budgeted', lblLeft:'Left',
@@ -1506,7 +1629,7 @@ const LANGS = {
     csvNone:'No transactions found. Check if the file has a header with Date, Description and Amount.',
     // Settings
     phSettings:'Settings', lblSAcct:'Account', lblSLang:'Language', lblSLangSub:'English',
-    lblExport:'Export data', lblExportSub:'Download JSON backup',
+    lblExport:'Export data', lblExportSub:'Download Excel spreadsheet',
     lblDemo:'Load demo data', lblDemoSub:'Fill with sample transactions',
     lblClearTx:'Clear transactions', lblClearTxSub:'Delete all transaction history',
     lblLogout:'Logout', lblLogoutSub:'Return to login screen',
@@ -1560,6 +1683,18 @@ const LANGS = {
     confirmDelete:'Delete this transaction?',
 
 
+    // Scheduled / Future transactions
+    phScheduled:'Scheduled', navScheduled:'Scheduled', lblScheduledTx:'Scheduled Transactions',
+    lblFutureIncome:'Future Income', lblFutureExpense:'Future Expenses', lblFutureNet:'Future Balance',
+    lblNoScheduled:'No scheduled transactions', lblNoScheduledSub:'Add scheduled transactions with future dates',
+    lblUpcoming:'Upcoming', lblThisMonth:'This month', lblNextMonth:'Next month',
+    scheduledTotal:'Scheduled total', projectedBalance:'Projected balance',
+    // Scheduled / Future transactions
+    phScheduled:'Agendados', navScheduled:'Agendados', lblScheduledTx:'Transações Agendadas',
+    lblFutureIncome:'Receitas Futuras', lblFutureExpense:'Despesas Futuras', lblFutureNet:'Saldo Futuro',
+    lblNoScheduled:'Sem transações agendadas', lblNoScheduledSub:'Adicione transações com datas futuras',
+    lblUpcoming:'Próximos', lblThisMonth:'Este mês', lblNextMonth:'Próximo mês',
+    scheduledTotal:'Total agendado', projectedBalance:'Saldo projetado',
     // Finance PRO
     proDashTitle:'Finance PRO',
     proDashDesc:'Master your finances with our complete personal finance control course.',
@@ -1598,7 +1733,7 @@ const LANGS = {
     insightOver:'🚨 Limite de {cat} estourado! Fale com a Fin →',
     insightWarn:'⚠️ {cat} em {pct}% do orçamento. Quer dicas? →',
     insightTop:'Maior gasto: {cat} ({val}, {pct}% do total). Pergunte à Fin! →',
-    phTx:'Transações', filterAll:'Todos', filterInc:'Receitas', filterExp:'Despesas',
+    phTx:'Transações', filterAll:'Todos', filterInc:'Receitas', filterExp:'Despesas', filterTrf:'Transferências',
     txDateToday:'Hoje', txDateYest:'Ontem',
     phBud:'Orçamentos', lblSpent:'Gasto', lblBudgeted:'Orçado', lblLeft:'Sobra',
     lblBudMonth:'Orçamento mensal',
@@ -1611,7 +1746,7 @@ const LANGS = {
     csvImported:'✓ {n} transações importadas!',
     csvNone:'Nenhuma transação encontrada. Verifique se o arquivo tem cabeçalho com Data, Descrição e Valor.',
     phSettings:'Configurações', lblSAcct:'Conta', lblSLang:'Idioma', lblSLangSub:'Português (Brasil)',
-    lblExport:'Exportar dados', lblExportSub:'Baixar backup em JSON',
+    lblExport:'Exportar dados', lblExportSub:'Baixar planilha Excel (.xlsx)',
     lblDemo:'Carregar dados de exemplo', lblDemoSub:'Preencher com transações de amostra',
     lblClearTx:'Limpar transações', lblClearTxSub:'Apagar todo o histórico de transações',
     lblLogout:'Sair', lblLogoutSub:'Voltar à tela de login',
@@ -1657,6 +1792,18 @@ const LANGS = {
     confirmDelete:'Excluir esta transação?',
 
 
+    // Scheduled / Future transactions
+    phScheduled:'Scheduled', navScheduled:'Scheduled', lblScheduledTx:'Scheduled Transactions',
+    lblFutureIncome:'Future Income', lblFutureExpense:'Future Expenses', lblFutureNet:'Future Balance',
+    lblNoScheduled:'No scheduled transactions', lblNoScheduledSub:'Add scheduled transactions with future dates',
+    lblUpcoming:'Upcoming', lblThisMonth:'This month', lblNextMonth:'Next month',
+    scheduledTotal:'Scheduled total', projectedBalance:'Projected balance',
+    // Scheduled / Future transactions
+    phScheduled:'Agendados', navScheduled:'Agendados', lblScheduledTx:'Transações Agendadas',
+    lblFutureIncome:'Receitas Futuras', lblFutureExpense:'Despesas Futuras', lblFutureNet:'Saldo Futuro',
+    lblNoScheduled:'Sem transações agendadas', lblNoScheduledSub:'Adicione transações com datas futuras',
+    lblUpcoming:'Próximos', lblThisMonth:'Este mês', lblNextMonth:'Próximo mês',
+    scheduledTotal:'Total agendado', projectedBalance:'Saldo projetado',
     // Finance PRO
     proDashTitle:'Finance PRO',
     proDashDesc:'Domine suas finanças com nosso curso completo de controle financeiro pessoal.',
@@ -1964,6 +2111,14 @@ function applyLang() {
   setTxt('lbl-cat-type',t.lblCatType); setTxt('lbl-cat-color',t.lblCatColor);
   setTxt('btn-save-cat',t.btnSaveCat);
   setTxt('fin-status-txt',t.finStatusTxt);
+  // Scheduled screen labels
+  setTxt('ph-scheduled',t.phScheduled);
+  setTxt('lbl-future-income',t.lblFutureIncome);
+  setTxt('lbl-future-expense',t.lblFutureExpense);
+  setTxt('lbl-projected-balance',t.projectedBalance);
+  // Update transfer filter chip labels
+  const chipTrf = document.getElementById('chip-sched-trf');
+  if(chipTrf) chipTrf.textContent = '⇄ ' + (t.filterTrf || 'Transfers');
 
   // Finance PRO
   setTxt('pro-dash-title',t.proDashTitle); setTxt('pro-dash-desc',t.proDashDesc);
@@ -1972,6 +2127,14 @@ function applyLang() {
   // Category type options
   const csel = document.getElementById('cat-type-sel');
   if(csel) { csel.options[0].text=t.catTypeExp; csel.options[1].text=t.catTypeInc; csel.options[2].text=t.catTypeBoth; }
+  // Update scheduled dashboard card labels
+  const schedTitle = document.getElementById('dash-sched-title');
+  const schedSub = document.getElementById('dash-sched-sub');
+  const schedCountLbl = document.getElementById('dash-sched-count-label');
+  if(schedTitle) schedTitle.textContent = lang==='pt' ? 'Agendados' : 'Scheduled';
+  if(schedSub) schedSub.textContent = lang==='pt' ? 'Próximos lançamentos' : 'Upcoming transactions';
+  if(schedCountLbl) schedCountLbl.textContent = lang==='pt' ? 'Lançamentos' : 'Transactions';
+
   // Refresh current screen content
   const cur = document.querySelector('.screen.active');
   if(cur) {
@@ -2121,6 +2284,7 @@ function navigate(scr) {
   if(scr==='home')         { renderDashboard(); }
   if(scr==='transactions') { S._txDirty=false; renderTransactions(); }
   if(scr==='budgets')      { S._budDirty=false; renderBudgets(); }
+  if(scr==='scheduled')    { S_schedMonth = nowM(); renderScheduled(); }
   if(scr==='fin')          initChat();
   if(scr==='settings')     renderSettings();
 }
@@ -2177,6 +2341,28 @@ function renderDashboard() {
       <div style="flex:1"><div style="font-size:12px;font-weight:700;color:${a.level==='critical'?'var(--coral)':'var(--amber)'};margin-bottom:2px">${a.catName}</div>
       <div style="font-size:12px;color:var(--t2);line-height:1.5;font-family:var(--ff-body)">${a.message}</div></div>
     </div>`).join('');
+  // Scheduled summary for dashboard
+  const today = new Date(); today.setHours(0,0,0,0);
+  const futureTxs = ud.transactions.filter(tx => {
+    if (!tx.scheduled) return false;
+    const txDate = new Date(tx.date + 'T12:00:00');
+    return txDate >= today;
+  });
+  const schedInc = futureTxs.filter(tx => tx.type==='income').reduce((s,tx) => s+tx.value, 0);
+  const schedExp = futureTxs.filter(tx => tx.type==='expense').reduce((s,tx) => s+tx.value, 0);
+  const schedTrf = futureTxs.filter(tx => tx.type==='transfer').reduce((s,tx) => s+tx.value, 0);
+  document.getElementById('dash-sched-count').textContent = futureTxs.length;
+  document.getElementById('dash-sched-inc').textContent = fmtShort(schedInc);
+  document.getElementById('dash-sched-exp').textContent = fmtShort(schedExp);
+  const dashTrf = document.getElementById('dash-sched-trf');
+  if(dashTrf) dashTrf.textContent = fmtShort(schedTrf);
+  const schedTitle = document.getElementById('dash-sched-title');
+  const schedSub = document.getElementById('dash-sched-sub');
+  const schedCountLbl = document.getElementById('dash-sched-count-label');
+  if(schedTitle) schedTitle.textContent = lang==='pt' ? 'Agendados' : 'Scheduled';
+  if(schedSub) schedSub.textContent = lang==='pt' ? 'Próximos lançamentos' : 'Upcoming transactions';
+  if(schedCountLbl) schedCountLbl.textContent = lang==='pt' ? 'Lançamentos' : 'Transactions';
+
   // Recent
   const recent=[...ud.transactions].sort((a,b)=>b.date.localeCompare(a.date)||b.id.localeCompare(a.id)).slice(0,6);
   document.getElementById('d-recent').innerHTML=recent.length
@@ -2413,24 +2599,52 @@ function hideChartTooltip() {
 // ══════════════════════════════════════════════════
 // TRANSACTIONS
 // ══════════════════════════════════════════════════
-function cycleTxMonth() {
-  const [y,m]=S.txMonth.split('-').map(Number);
-  const prev=m===1?`${y-1}-12`:`${y}-${String(m-1).padStart(2,'0')}`;
-  S.txMonth=S.txMonth===nowM()?prev:nowM();
+function navTxMonth(dir) {
+  // dir: -1 = previous month, +1 = next month
+  const [y,m] = S.txMonth.split('-').map(Number);
+  let nm = m + dir, ny = y;
+  if (nm > 12) { nm -= 12; ny++; }
+  if (nm < 1)  { nm += 12; ny--; }
+  // Limit range: 24 months back to 24 months forward from today
+  const now = new Date(); const cy = now.getFullYear(), cm = now.getMonth()+1;
+  const fwdM = cm + 24; const fwdY = cy + Math.floor((fwdM-1)/12); const fwdMM = ((fwdM-1)%12)+1;
+  const bkM  = cm - 24; let bkY = cy + Math.floor((bkM-1)/12);
+  let bkMM = ((bkM % 12) + 12) % 12; if (bkMM === 0) bkMM = 12;
+  const target    = `${ny}-${String(nm).padStart(2,'0')}`;
+  const maxTarget = `${fwdY}-${String(fwdMM).padStart(2,'0')}`;
+  const minTarget = `${bkY}-${String(bkMM).padStart(2,'0')}`;
+  if (target > maxTarget || target < minTarget) return;
+  S.txMonth = target;
   renderTransactions();
 }
+// Keep legacy name as alias (used nowhere but safe to keep)
+function cycleTxMonth() { navTxMonth(1); }
 
 function renderTransactions() {
   const ud=userData(); if(!ud) return;
   const t=T(), allCats=[...SYSTEM_CATS,...ud.customCats];
   const isPt=lang==='pt';
 
+  // Update prev/next button states
+  (function(){
+    const now = new Date(); const cy = now.getFullYear(), cm = now.getMonth()+1;
+    const fwdM = cm+24; const fwdY = cy+Math.floor((fwdM-1)/12); const fwdMM = ((fwdM-1)%12)+1;
+    const bkM = cm-24; let bkY = cy+Math.floor((bkM-1)/12); let bkMM = ((bkM%12)+12)%12; if(bkMM===0) bkMM=12;
+    const maxT = `${fwdY}-${String(fwdMM).padStart(2,'0')}`;
+    const minT = `${bkY}-${String(bkMM).padStart(2,'0')}`;
+    const prev = document.getElementById('tx-month-prev');
+    const next = document.getElementById('tx-month-next');
+    if(prev) prev.style.opacity = S.txMonth <= minT ? '0.3' : '1';
+    if(next) next.style.opacity = S.txMonth >= maxT ? '0.3' : '1';
+  })();
+
   // Build chip list
   const chips=document.getElementById('tx-chips');
   chips.innerHTML=[
-    {id:'all',    em:'✦', name_en:'All',       name_pt:'Todos'},
-    {id:'income', em:'💰', name_en:'Income',    name_pt:'Receitas'},
-    {id:'expense',em:'💸', name_en:'Expenses',  name_pt:'Despesas'},
+    {id:'all',      em:'✦',  name_en:'All',         name_pt:'Todos'},
+    {id:'income',   em:'💰', name_en:'Income',       name_pt:'Receitas'},
+    {id:'expense',  em:'💸', name_en:'Expenses',     name_pt:'Despesas'},
+    {id:'transfer', em:'⇄',  name_en:'Transfers',    name_pt:'Transferências'},
     ...allCats.filter(c=>c.type!=='income').slice(0,6)
   ].map(c=>`<button class="chip ${S.txFilter===c.id?'on':''}" onclick="setTxFilter('${c.id}')">${c.em||''} ${catName(c)}</button>`).join('');
 
@@ -2443,16 +2657,19 @@ function renderTransactions() {
   // Compute totals from full month (independent of filter)
   const totalInc = allMonth.filter(tx=>tx.type==='income').reduce((s,tx)=>s+tx.value,0);
   const totalExp = allMonth.filter(tx=>tx.type==='expense').reduce((s,tx)=>s+tx.value,0);
+  const totalTrf = allMonth.filter(tx=>tx.type==='transfer').reduce((s,tx)=>s+tx.value,0);
   const totalNet = totalInc - totalExp;
 
   // Apply filter for list
   let txs = allMonth.slice();
-  let filterInc=0, filterExp=0, filterCount=0;
+  let filterInc=0, filterExp=0, filterTrf=0, filterCount=0;
   if(S.txFilter==='income')        { txs=txs.filter(tx=>tx.type==='income'); }
   else if(S.txFilter==='expense')  { txs=txs.filter(tx=>tx.type==='expense'); }
+  else if(S.txFilter==='transfer') { txs=txs.filter(tx=>tx.type==='transfer'); }
   else if(S.txFilter!=='all')      { txs=txs.filter(tx=>tx.catId===S.txFilter); }
   filterInc = txs.filter(tx=>tx.type==='income').reduce((s,tx)=>s+tx.value,0);
   filterExp = txs.filter(tx=>tx.type==='expense').reduce((s,tx)=>s+tx.value,0);
+  filterTrf = txs.filter(tx=>tx.type==='transfer').reduce((s,tx)=>s+tx.value,0);
   filterCount = txs.length;
 
   // ── Summary bar ────────────────────────────────────────
@@ -2461,21 +2678,25 @@ function renderTransactions() {
     const isAll = S.txFilter==='all';
     const netCol = totalNet>=0?'var(--lime)':'var(--coral)';
     sb.innerHTML = `
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
-        <div style="background:var(--s2);border:.5px solid var(--b2);border-radius:10px;padding:10px 12px;text-align:center">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+        <div style="background:var(--s2);border:.5px solid var(--b2);border-radius:10px;padding:10px 8px;text-align:center">
           <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--lime);margin-bottom:4px;font-family:var(--ff-body)">${isPt?'Receitas':'Income'}</div>
-          <div style="font-size:14px;font-weight:700;color:var(--lime);font-family:var(--ff-mono);font-feature-settings:'tnum','zero'">${fmt(isAll?totalInc:filterInc)}</div>
+          <div style="font-size:13px;font-weight:700;color:var(--lime);font-family:var(--ff-mono);font-feature-settings:'tnum','zero'">${fmt(isAll?totalInc:filterInc)}</div>
         </div>
-        <div style="background:var(--s2);border:.5px solid var(--b2);border-radius:10px;padding:10px 12px;text-align:center">
+        <div style="background:var(--s2);border:.5px solid var(--b2);border-radius:10px;padding:10px 8px;text-align:center">
           <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--coral);margin-bottom:4px;font-family:var(--ff-body)">${isPt?'Despesas':'Expenses'}</div>
-          <div style="font-size:14px;font-weight:700;color:var(--coral);font-family:var(--ff-mono);font-feature-settings:'tnum','zero'">${fmt(isAll?totalExp:filterExp)}</div>
+          <div style="font-size:13px;font-weight:700;color:var(--coral);font-family:var(--ff-mono);font-feature-settings:'tnum','zero'">${fmt(isAll?totalExp:filterExp)}</div>
         </div>
-        <div style="background:var(--s2);border:.5px solid var(--b2);border-radius:10px;padding:10px 12px;text-align:center">
+        <div style="background:var(--s2);border:.5px solid var(--b2);border-radius:10px;padding:10px 8px;text-align:center">
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--violet);margin-bottom:4px;font-family:var(--ff-body)">${isPt?'Transf.':'Transfers'}</div>
+          <div style="font-size:13px;font-weight:700;color:var(--violet);font-family:var(--ff-mono);font-feature-settings:'tnum','zero'">${fmt(isAll?totalTrf:filterTrf)}</div>
+        </div>
+        <div style="background:var(--s2);border:.5px solid var(--b2);border-radius:10px;padding:10px 8px;text-align:center">
           <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--t2);margin-bottom:4px;font-family:var(--ff-body)">${isPt?'Saldo':'Balance'}</div>
-          <div style="font-size:14px;font-weight:700;color:${netCol};font-family:var(--ff-mono);font-feature-settings:'tnum','zero'">${totalNet>=0?'+':''}${fmt(totalNet)}</div>
+          <div style="font-size:13px;font-weight:700;color:${netCol};font-family:var(--ff-mono);font-feature-settings:'tnum','zero'">${totalNet>=0?'+':''}${fmt(totalNet)}</div>
         </div>
       </div>
-      ${!isAll&&filterCount>0?`<div style="font-size:11px;color:var(--t3);text-align:center;margin-top:6px;font-family:var(--ff-body)">${filterCount} ${isPt?'lançamento(s)':'transaction(s)'} · ${isPt?'total':'total'}: ${filterExp>0?'−'+fmt(filterExp):'+'+fmt(filterInc)}</div>`:''}
+      ${!isAll&&filterCount>0?`<div style="font-size:11px;color:var(--t3);text-align:center;margin-top:6px;font-family:var(--ff-body)">${filterCount} ${isPt?'lançamento(s)':'transaction(s)'} · ${isPt?'total':'total'}: ${S.txFilter==='expense'?'−'+fmt(filterExp):S.txFilter==='income'?'+'+fmt(filterInc):S.txFilter==='transfer'?'⇄'+fmt(filterTrf):'+'+fmt(filterInc-filterExp)}</div>`:''}
     `;
   }
 
@@ -2513,12 +2734,241 @@ function txRowHTML(tx) {
 
 function setTxFilter(id){S.txFilter=id;renderTransactions();}
 
+// ══════════════════════════════════════════════════
+// SCHEDULED TRANSACTIONS SCREEN
+// ══════════════════════════════════════════════════
+let S_schedFilter = 'all';
+let S_schedMonth = null;
+
+function navSchedMonth(dir) {
+  // dir: -1 = previous month, +1 = next month
+  if (!S_schedMonth) S_schedMonth = nowM();
+  const [y,m] = S_schedMonth.split('-').map(Number);
+  let nm = m + dir, ny = y;
+  if (nm > 12) { nm -= 12; ny++; }
+  if (nm < 1)  { nm += 12; ny--; }
+  // Limit range: 24 months back to 24 months forward from today
+  const now = new Date(); const cy = now.getFullYear(), cm = now.getMonth()+1;
+  const fwdM = cm + 24; const fwdY = cy + Math.floor((fwdM-1)/12); const fwdMM = ((fwdM-1)%12)+1;
+  const bkM  = cm - 24; let bkY = cy + Math.floor((bkM-1)/12);
+  let bkMM = ((bkM % 12) + 12) % 12; if (bkMM === 0) bkMM = 12;
+  const target    = `${ny}-${String(nm).padStart(2,'0')}`;
+  const maxTarget = `${fwdY}-${String(fwdMM).padStart(2,'0')}`;
+  const minTarget = `${bkY}-${String(bkMM).padStart(2,'0')}`;
+  if (target > maxTarget || target < minTarget) return;
+  S_schedMonth = target;
+  renderScheduled();
+}
+// Keep legacy name as alias
+function cycleSchedMonth() { navSchedMonth(1); }
+
+function setSchedFilter(filter) {
+  S_schedFilter = filter;
+  // Update chip styles
+  const chipAll = document.getElementById('chip-sched-all');
+  const chipInc = document.getElementById('chip-sched-inc');
+  const chipExp = document.getElementById('chip-sched-exp');
+  const chipTrf = document.getElementById('chip-sched-trf');
+  if(chipAll) chipAll.className = 'chip' + (filter==='all'?' on':'');
+  if(chipInc) chipInc.className = 'chip' + (filter==='income'?' on':'');
+  if(chipExp) chipExp.className = 'chip' + (filter==='expense'?' on':'');
+  if(chipTrf) chipTrf.className = 'chip' + (filter==='transfer'?' on':'');
+  renderScheduledList();
+}
+
+function getScheduledTransactions(ym) {
+  const ud = userData(); if(!ud) return [];
+  return ud.transactions.filter(tx => {
+    if (tx.scheduled !== true) return false;
+    // Show all scheduled transactions in the selected month
+    return tx.date.startsWith(ym);
+  }).sort((a,b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id));
+}
+
+// Get ALL future scheduled transactions (across all months)
+function getAllFutureScheduled() {
+  const ud = userData(); if(!ud) return [];
+  const today = new Date(); today.setHours(0,0,0,0);
+  return ud.transactions.filter(tx => {
+    if (tx.scheduled !== true) return false;
+    const txDate = new Date(tx.date + 'T12:00:00');
+    return txDate >= today;
+  }).sort((a,b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id));
+}
+
+function renderScheduled() {
+  const ud = userData(); if(!ud) return;
+  const t = T();
+  const isPt = lang==='pt';
+
+  // Initialize month if not set - always default to current month
+  if (!S_schedMonth) S_schedMonth = nowM();
+
+  // Update prev/next button states
+  (function(){
+    const now = new Date(); const cy = now.getFullYear(), cm = now.getMonth()+1;
+    const fwdM = cm+24; const fwdY = cy+Math.floor((fwdM-1)/12); const fwdMM = ((fwdM-1)%12)+1;
+    const bkM = cm-24; let bkY = cy+Math.floor((bkM-1)/12); let bkMM = ((bkM%12)+12)%12; if(bkMM===0) bkMM=12;
+    const maxT = `${fwdY}-${String(fwdMM).padStart(2,'0')}`;
+    const minT = `${bkY}-${String(bkMM).padStart(2,'0')}`;
+    const prev = document.getElementById('sched-month-prev');
+    const next = document.getElementById('sched-month-next');
+    if(prev) prev.style.opacity = S_schedMonth <= minT ? '0.3' : '1';
+    if(next) next.style.opacity = S_schedMonth >= maxT ? '0.3' : '1';
+  })();
+
+  const mn = new Date(S_schedMonth + '-15');
+  const monthBtn = document.getElementById('sched-month-btn');
+  if(monthBtn) {
+    monthBtn.textContent = mn.toLocaleDateString(
+      lang==='pt'?'pt-BR':'en-US', {month:'short', year:'numeric'}
+    );
+  }
+
+  const sched = getScheduledTransactions(S_schedMonth);
+  const inc = sched.filter(tx => tx.type==='income').reduce((s,tx) => s+tx.value, 0);
+  const exp = sched.filter(tx => tx.type==='expense').reduce((s,tx) => s+tx.value, 0);
+  const trf = sched.filter(tx => tx.type==='transfer').reduce((s,tx) => s+tx.value, 0);
+  const net = inc - exp;
+
+  // Update summary cards
+  const elInc = document.getElementById('sched-inc');
+  const elExp = document.getElementById('sched-exp');
+  const elTrf = document.getElementById('sched-trf');
+  const elNet = document.getElementById('sched-net');
+  if(elInc) elInc.textContent = fmt(inc);
+  if(elExp) elExp.textContent = fmt(exp);
+  if(elTrf) elTrf.textContent = fmt(trf);
+  if(elNet) {
+    elNet.textContent = (net>=0?'+':'') + fmt(net);
+    elNet.style.color = net>=0 ? 'var(--lime)' : 'var(--coral)';
+  }
+
+  // Update transfer label
+  const lblTrf = document.getElementById('lbl-future-transfer');
+  if(lblTrf) lblTrf.textContent = t.filterTrf || (isPt?'Transferências':'Transfers');
+
+  // Progress bars
+  const mx = Math.max(inc, exp, trf, 1);
+  const mfInc = document.getElementById('mf-sched-inc');
+  const mfExp = document.getElementById('mf-sched-exp');
+  const mfTrf = document.getElementById('mf-sched-trf');
+  if(mfInc) mfInc.style.width = Math.min(100, (inc/mx)*100) + '%';
+  if(mfExp) mfExp.style.width = Math.min(100, (exp/mx)*100) + '%';
+  if(mfTrf) mfTrf.style.width = Math.min(100, (trf/mx)*100) + '%';
+
+  // Delta text
+  const deltaEl = document.getElementById('sched-delta');
+  if(deltaEl) {
+    if (sched.length === 0) {
+      // Check if there are scheduled transactions in OTHER months
+      const allFuture = getAllFutureScheduled();
+      if (allFuture.length > 0) {
+        const otherMonths = [...new Set(allFuture.map(tx => tx.date.slice(0,7)))].sort();
+        deltaEl.textContent = isPt 
+          ? `Nenhum para ${mn.toLocaleDateString('pt-BR',{month:'long'})}. Próximos: ${otherMonths.map(m => new Date(m+'-15').toLocaleDateString('pt-BR',{month:'short'})).join(', ')}`
+          : `None for ${mn.toLocaleDateString('en-US',{month:'long'})}. Upcoming: ${otherMonths.map(m => new Date(m+'-15').toLocaleDateString('en-US',{month:'short'})).join(', ')}`;
+        deltaEl.style.color = 'var(--amber)';
+      } else {
+        deltaEl.textContent = isPt ? 'Nenhuma transação agendada' : 'No scheduled transactions';
+        deltaEl.style.color = 'var(--t3)';
+      }
+    } else {
+      deltaEl.textContent = `${sched.length} ${isPt?'lançamento(s) agendado(s)':'scheduled transaction(s)'} · ${isPt?'Saldo projetado':'Projected balance'}: ${net>=0?'+':''}${fmt(net)}`;
+      deltaEl.style.color = 'var(--t2)';
+    }
+  }
+
+  // Update labels
+  const phSched = document.getElementById('ph-scheduled');
+  const lblFutureInc = document.getElementById('lbl-future-income');
+  const lblFutureExp = document.getElementById('lbl-future-expense');
+  const lblProjBal = document.getElementById('lbl-projected-balance');
+  if(phSched) phSched.textContent = t.phScheduled || 'Scheduled';
+  if(lblFutureInc) lblFutureInc.textContent = t.lblFutureIncome || 'Future Income';
+  if(lblFutureExp) lblFutureExp.textContent = t.lblFutureExpense || 'Future Expenses';
+  if(lblProjBal) lblProjBal.textContent = t.projectedBalance || 'Projected Balance';
+
+  // Update chip labels
+  const chipAll = document.getElementById('chip-sched-all');
+  const chipInc = document.getElementById('chip-sched-inc');
+  const chipExp = document.getElementById('chip-sched-exp');
+  if(chipAll) chipAll.textContent = '✦ ' + (t.filterAll || 'All');
+  if(chipInc) chipInc.textContent = '💰 ' + (t.filterInc || 'Income');
+  if(chipExp) chipExp.textContent = '💸 ' + (t.filterExp || 'Expenses');
+
+  renderScheduledList();
+}
+
+function renderScheduledList() {
+  const ud = userData(); if(!ud) return;
+  const t = T();
+  const isPt = lang==='pt';
+  let sched = getScheduledTransactions(S_schedMonth);
+
+  // Apply filter
+  if (S_schedFilter !== 'all') {
+    sched = sched.filter(tx => tx.type === S_schedFilter);
+  }
+
+  const el = document.getElementById('sched-list-wrap');
+  if (!el) return;
+
+  if (!sched.length) {
+    // Check if there are scheduled transactions in other months to show a hint
+    const allFuture = getAllFutureScheduled();
+    const otherMonths = [...new Set(allFuture.map(tx => tx.date.slice(0,7)))].filter(m => m !== S_schedMonth).sort();
+
+    let hintHtml = '';
+    if (otherMonths.length > 0) {
+      const monthNames = otherMonths.map(m => {
+        const d = new Date(m + '-15');
+        return d.toLocaleDateString(isPt?'pt-BR':'en-US', {month:'long', year:'numeric'});
+      });
+      hintHtml = `<div style="margin-top:12px;font-size:12px;color:var(--amber);font-family:var(--ff-body)">
+        📅 ${isPt?'Você tem agendamentos em':'You have scheduled transactions in'}: ${monthNames.join(', ')}
+      </div>`;
+    }
+
+    el.innerHTML = `
+      <div class="empty" style="padding:50px 20px">
+        <div class="empty-ic">📅</div>
+        <div class="empty-t">${t.lblNoScheduled || (isPt?'Sem transações agendadas':'No scheduled transactions')}</div>
+        <div class="empty-s">${t.lblNoScheduledSub || (isPt?'Adicione transações com datas futuras':'Add transactions with future dates')}</div>
+        ${hintHtml}
+      </div>`;
+    return;
+  }
+
+  // Group by date
+  const groups = {};
+  sched.forEach(tx => { if(!groups[tx.date]) groups[tx.date]=[]; groups[tx.date].push(tx); });
+
+  let html = '';
+  Object.entries(groups).sort((a,b) => a[0].localeCompare(b[0])).forEach(([date, grp]) => {
+    const dayTotal = grp.reduce((s,tx) => tx.type==='income'?s+tx.value:tx.type==='expense'?s-tx.value:s, 0);
+    const dt = new Date(date + 'T12:00:00');
+    const dayStr = dt.toLocaleDateString(isPt?'pt-BR':'en-US', {weekday:'short', day:'2-digit', month:'short'});
+    const daysUntil = Math.ceil((dt - new Date().setHours(0,0,0,0)) / 86400000);
+    const daysText = daysUntil === 0 ? (isPt?'Hoje':'Today') : daysUntil === 1 ? (isPt?'Amanhã':'Tomorrow') : `${isPt?'Em':'In'} ${daysUntil} ${isPt?'dias':'days'}`;
+
+    html += `<div class="tx-date-hdr" style="background:linear-gradient(90deg,rgba(236,72,153,.06) 0%,transparent 100%)">
+      <span>${dayStr} <span style="color:var(--t3);font-weight:500">· ${daysText}</span></span>
+      <span style="color:${dayTotal>=0?'var(--lime)':'var(--coral)'};font-family:var(--ff-mono);font-feature-settings:'tnum','zero'">${dayTotal>=0?'+':''}${fmt(dayTotal)}</span>
+    </div>`;
+    html += '<div class="tx-wrap" style="margin-bottom:8px">' + grp.map(txRowHTML).join('') + '</div>';
+  });
+
+  el.innerHTML = html;
+}
+
 // ── Refresh all data-bearing screens unconditionally ──
 function refreshAllScreens() {
   renderDashboard();
   // Only re-render non-home screens if they're visible (avoids flicker on inactive screens)
   if (currentScreen === 'transactions') renderTransactions();
   if (currentScreen === 'budgets')      renderBudgets();
+  if (currentScreen === 'scheduled')    renderScheduled();
   // Always mark them stale so they re-render next time they're opened
   S._txDirty  = true;
   S._budDirty = true;
@@ -2636,7 +3086,7 @@ function submitTransaction() {
     accId:document.getElementById('in-ac').value,
     toAccId:document.getElementById('in-toac').value,
     date:document.getElementById('in-date').value,
-    scheduled:document.getElementById('tog-sched').classList.contains('on'),
+    scheduled: document.getElementById('tog-sched').classList.contains('on') === true,
     notes:document.getElementById('in-notes').value.trim(),
   };
   const errors=validateTx(data);
@@ -2666,6 +3116,11 @@ function submitTransaction() {
 
   // Always refresh every screen so data is consistent regardless of which is visible
   refreshAllScreens();
+
+  // If we added a scheduled transaction and we're on the scheduled screen, re-render it
+  if (data.scheduled && currentScreen === 'scheduled') {
+    renderScheduled();
+  }
 }
 
 // ══════════════════════════════════════════════════
@@ -3324,9 +3779,116 @@ function loadDemoData(){
 }
 
 function exportData(){
-  const blob=new Blob([JSON.stringify({user:S.currentUser,data:userData()},null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  a.download=`mycounter-${S.currentUser}-backup.json`;a.click();
+  // Load SheetJS dynamically if not present
+  if(typeof XLSX === 'undefined'){
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    s.onload=()=>_doExportExcel();
+    document.head.appendChild(s);
+  } else {
+    _doExportExcel();
+  }
+}
+
+function _doExportExcel(){
+  const ud=userData(); if(!ud) return;
+  const isPt=(S.lang||'pt')==='pt';
+  const wb=XLSX.utils.book_new();
+  const allCats=[...SYSTEM_CATS,...(ud.customCats||[])];
+  const allAccs=ud.accounts||DEFAULT_ACCOUNTS;
+  const catName_=c=>isPt?(c.name_pt||c.name_en):c.name_en;
+  const accName_=id=>{const a=allAccs.find(x=>x.id===id);return a?a.name:(isPt?'Conta':'Account');};
+  const catOf=id=>{const c=allCats.find(x=>x.id===id)||SYSTEM_CATS.find(x=>x.id==='sys_other');return catName_(c);};
+  const fmtN=v=>parseFloat(v)||0;
+  const fmtDate_=d=>d?d.replace(/-/g,'/'):'';
+
+  /* ── 1. TRANSACTIONS sheet ── */
+  const txHeader=isPt
+    ?['Data','Tipo','Categoria','Conta','Descrição','Valor (R$)','Agendado','Recorrente','Notas']
+    :['Date','Type','Category','Account','Description','Amount','Scheduled','Recurring','Notes'];
+  const typeLabel=t=>t==='income'?(isPt?'Receita':'Income'):t==='expense'?(isPt?'Despesa':'Expense'):(isPt?'Transferência':'Transfer');
+  const boolLbl=v=>v?(isPt?'Sim':'Yes'):(isPt?'Não':'No');
+  const txRows=([...ud.transactions]
+    .sort((a,b)=>b.date.localeCompare(a.date))
+    .map(t=>[fmtDate_(t.date),typeLabel(t.type),catOf(t.catId),accName_(t.accId),t.desc||'',fmtN(t.value),boolLbl(t.scheduled),boolLbl(t.recurring),t.notes||'']));
+  const wsTx=XLSX.utils.aoa_to_sheet([txHeader,...txRows]);
+  // Column widths
+  wsTx['!cols']=[{wch:12},{wch:14},{wch:18},{wch:16},{wch:30},{wch:14},{wch:12},{wch:12},{wch:28}];
+  // Header style via cell meta
+  txHeader.forEach((_,ci)=>{
+    const cell=XLSX.utils.encode_cell({r:0,c:ci});
+    if(!wsTx[cell]) return;
+    wsTx[cell].s={font:{bold:true},fill:{fgColor:{rgb:'1A2A3A'}},alignment:{horizontal:'center'}};
+  });
+  XLSX.utils.book_append_sheet(wb,wsTx,isPt?'Transações':'Transactions');
+
+  /* ── 2. MONTHLY SUMMARY sheet ── */
+  const monthMap={};
+  ud.transactions.filter(t=>!t.scheduled).forEach(t=>{
+    const m=t.date.slice(0,7);
+    if(!monthMap[m]) monthMap[m]={income:0,expense:0,transfer:0,count:0};
+    if(t.type==='income')    monthMap[m].income+=fmtN(t.value);
+    if(t.type==='expense')   monthMap[m].expense+=fmtN(t.value);
+    if(t.type==='transfer')  monthMap[m].transfer+=fmtN(t.value);
+    monthMap[m].count++;
+  });
+  const sumHeader=isPt
+    ?['Mês','Receitas (R$)','Despesas (R$)','Transferências (R$)','Saldo (R$)','Nº Lançamentos']
+    :['Month','Income','Expenses','Transfers','Net Balance','# Transactions'];
+  const sumRows=Object.keys(monthMap).sort().reverse().map(m=>{
+    const r=monthMap[m];
+    return [m,fmtN(r.income),fmtN(r.expense),fmtN(r.transfer),fmtN(r.income-r.expense),r.count];
+  });
+  const wsSum=XLSX.utils.aoa_to_sheet([sumHeader,...sumRows]);
+  wsSum['!cols']=[{wch:10},{wch:16},{wch:16},{wch:18},{wch:14},{wch:16}];
+  XLSX.utils.book_append_sheet(wb,wsSum,isPt?'Resumo Mensal':'Monthly Summary');
+
+  /* ── 3. BY CATEGORY sheet ── */
+  const catMap={};
+  ud.transactions.filter(t=>t.type==='expense'&&!t.scheduled).forEach(t=>{
+    const cn=catOf(t.catId);
+    if(!catMap[cn]) catMap[cn]={total:0,count:0};
+    catMap[cn].total+=fmtN(t.value);
+    catMap[cn].count++;
+  });
+  const catHeader=isPt?['Categoria','Total Gasto (R$)','Nº Lançamentos','% do Total']:['Category','Total Spent','# Transactions','% of Total'];
+  const totalExp2=Object.values(catMap).reduce((s,x)=>s+x.total,0)||1;
+  const catRows=Object.entries(catMap).sort((a,b)=>b[1].total-a[1].total)
+    .map(([name,d])=>[name,fmtN(d.total),d.count,parseFloat((d.total/totalExp2*100).toFixed(1))]);
+  const wsCat=XLSX.utils.aoa_to_sheet([catHeader,...catRows]);
+  wsCat['!cols']=[{wch:20},{wch:16},{wch:16},{wch:12}];
+  XLSX.utils.book_append_sheet(wb,wsCat,isPt?'Por Categoria':'By Category');
+
+  /* ── 4. ACCOUNTS sheet ── */
+  const accHeader=isPt?['Conta','Tipo','Saldo Inicial (R$)','Total Entradas (R$)','Total Saídas (R$)','Saldo Atual (R$)']:['Account','Type','Initial Balance','Total In','Total Out','Current Balance'];
+  const accRows=allAccs.map(a=>{
+    const txIn =ud.transactions.filter(t=>t.accId===a.id&&t.type==='income').reduce((s,t)=>s+fmtN(t.value),0);
+    const txOut=ud.transactions.filter(t=>t.accId===a.id&&t.type==='expense').reduce((s,t)=>s+fmtN(t.value),0);
+    const init=fmtN(a.balance||a.initialBalance||0);
+    return [a.name,a.type||'—',init,txIn,txOut,init+txIn-txOut];
+  });
+  const wsAcc=XLSX.utils.aoa_to_sheet([accHeader,...accRows]);
+  wsAcc['!cols']=[{wch:18},{wch:14},{wch:18},{wch:16},{wch:16},{wch:16}];
+  XLSX.utils.book_append_sheet(wb,wsAcc,isPt?'Contas':'Accounts');
+
+  /* ── 5. BUDGETS/GOALS sheet ── */
+  if(ud.budgets&&ud.budgets.length>0){
+    const curYm=S.dashMonth||new Date().toISOString().slice(0,7);
+    const budHeader=isPt?['Categoria','Limite (R$)','Gasto no Mês (R$)','Disponível (R$)','% Usado']:['Category','Limit','Spent This Month','Available','% Used'];
+    const budRows=ud.budgets.map(b=>{
+      const spent=ud.transactions.filter(t=>t.type==='expense'&&t.catId===b.catId&&t.date.startsWith(curYm)).reduce((s,t)=>s+fmtN(t.value),0);
+      const lim=fmtN(b.limit);
+      return [catOf(b.catId),lim,spent,Math.max(0,lim-spent),parseFloat((spent/lim*100).toFixed(1))];
+    });
+    const wsBud=XLSX.utils.aoa_to_sheet([budHeader,...budRows]);
+    wsBud['!cols']=[{wch:20},{wch:14},{wch:18},{wch:16},{wch:10}];
+    XLSX.utils.book_append_sheet(wb,wsBud,isPt?'Metas':'Budgets');
+  }
+
+  /* ── Export ── */
+  const today=new Date().toISOString().slice(0,10);
+  XLSX.writeFile(wb,`mycounter-${S.currentUser}-${today}.xlsx`);
+  showToast(isPt?'Excel exportado com sucesso! 📊':'Excel exported successfully! 📊','success');
 }
 
 function clearTransactions(){
